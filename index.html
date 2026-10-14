@@ -1,1 +1,2846 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f0f1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BIN↔ISO">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>BIN ↔ ISO Ultimate</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
+  :root {
+    --bg-1: #0f0f1e;
+    --bg-2: #1a1a2e;
+    --bg-3: #16213e;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --accent-1: #00d4ff;
+    --accent-2: #7b2ff7;
+    --accent-3: #ff2e63;
+    --success: #00ff7f;
+    --danger: #ff4757;
+    --warning: #ffb84d;
+    --info: #00d4ff;
+    --text-main: #ffffff;
+    --text-mid: #c9d1e8;
+    --text-dim: #8892b0;
+    --text-faint: #5a6480;
+    --input-bg: rgba(255, 255, 255, 0.05);
+  }
+  
+  [data-theme="light"] {
+    --bg-1: #f0f2f8;
+    --bg-2: #e8ecf5;
+    --bg-3: #dde3f0;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(0, 0, 0, 0.06);
+    --accent-1: #0099cc;
+    --accent-2: #6a1fd4;
+    --accent-3: #d81b60;
+    --success: #00a844;
+    --danger: #e53935;
+    --warning: #f57c00;
+    --info: #0099cc;
+    --text-main: #1a1a2e;
+    --text-mid: #3a4560;
+    --text-dim: #5a6480;
+    --text-faint: #8892b0;
+    --input-bg: rgba(0, 0, 0, 0.03);
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 40%, var(--bg-3) 100%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 14px;
+    padding-bottom: 90px;
+    overflow-x: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
+    touch-action: manipulation;
+  }
+  
+  .container {
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  /* ====== HEADER ====== */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 4px 6px;
+  }
+  
+  .header-left h1 {
+    font-size: 20px;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  
+  .header-left p {
+    font-size: 10.5px;
+    color: var(--text-dim);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 6px;
+  }
+  
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-mid);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s ease;
+  }
+  
+  .icon-btn:active {
+    transform: scale(0.92);
+    background: rgba(0, 212, 255, 0.15);
+  }
+  
+  /* ====== TABS ====== */
+  .tabs {
+    display: flex;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 4px;
+    gap: 4px;
+  }
+  
+  .tab {
+    flex: 1;
+    padding: 11px 6px;
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-dim);
+    border-radius: 11px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .tab.active {
+    background: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(0, 212, 255, 0.3);
+  }
+  
+  /* ====== CARD ====== */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 14px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  /* ====== SECTION TITLE ====== */
+  .section-title {
+    font-size: 10.5px;
+    color: var(--text-dim);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .section-title .badge {
+    font-size: 8.5px;
+    padding: 2px 6px;
+    background: rgba(0, 212, 255, 0.15);
+    color: var(--accent-1);
+    border-radius: 5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  
+  /* ====== RADIO GROUP ====== */
+  .radio-group {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  
+  .radio-group.cols-2 { grid-template-columns: 1fr 1fr; }
+  .radio-group.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .radio-group.cols-4 { grid-template-columns: 1fr 1fr; }
+  
+  .radio-btn {
+    position: relative;
+    padding: 10px 8px;
+    background: var(--input-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+  
+  .radio-btn input { position: absolute; opacity: 0; pointer-events: none; }
+  
+  .radio-btn .rb-title {
+    display: block;
+    color: var(--text-mid);
+    font-size: 11.5px;
+    margin-bottom: 2px;
+    font-weight: 700;
+  }
+  
+  .radio-btn .rb-desc {
+    font-size: 9px;
+    color: var(--text-faint);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  
+  .radio-btn.selected {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: var(--accent-1);
+  }
+  
+  .radio-btn.selected .rb-title { color: var(--accent-1); }
+  
+  /* ====== DROP ZONE ====== */
+  .drop-zone {
+    border: 2px dashed rgba(0, 212, 255, 0.35);
+    border-radius: 12px;
+    padding: 26px 14px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    background: var(--input-bg);
+  }
+  
+  .drop-zone:active,
+  .drop-zone.dragover {
+    border-color: var(--accent-1);
+    background: rgba(0, 212, 255, 0.08);
+    transform: scale(0.98);
+  }
+  
+  .drop-zone .icon { font-size: 34px; margin-bottom: 6px; display: block; }
+  .drop-zone .title { font-size: 13.5px; font-weight: 700; margin-bottom: 3px; }
+  .drop-zone .subtitle { font-size: 11px; color: var(--text-dim); }
+  
+  input[type="file"] { display: none; }
+  
+  /* ====== FILE LIST ====== */
+  .file-list {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  
+  .file-list::-webkit-scrollbar { width: 4px; }
+  .file-list::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.3); border-radius: 2px; }
+  
+  .file-item {
+    padding: 10px 11px;
+    background: rgba(0, 212, 255, 0.06);
+    border-radius: 10px;
+    border-left: 3px solid var(--accent-1);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    animation: slideIn 0.3s ease;
+    position: relative;
+  }
+  
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .file-item .fi-icon { font-size: 18px; flex-shrink: 0; }
+  .file-item .fi-info { flex: 1; min-width: 0; }
+  
+  .file-item .fi-name {
+    font-size: 11.5px;
+    font-weight: 700;
+    word-break: break-all;
+    line-height: 1.3;
+    color: var(--text-main);
+  }
+  
+  .file-item .fi-meta {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 2px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .file-item .fi-meta span { display: inline-flex; align-items: center; gap: 3px; }
+  
+  .file-item .fi-status {
+    font-size: 9.5px;
+    padding: 3px 7px;
+    border-radius: 6px;
+    font-weight: 800;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  
+  .fi-status.pending { background: rgba(136, 146, 176, 0.2); color: var(--text-dim); }
+  .fi-status.processing { background: rgba(0, 212, 255, 0.2); color: var(--accent-1); animation: pulse 1.5s infinite; }
+  .fi-status.done { background: rgba(0, 255, 127, 0.2); color: var(--success); }
+  .fi-status.error { background: rgba(255, 71, 87, 0.2); color: var(--danger); }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  
+  .file-item .fi-remove {
+    background: rgba(255, 71, 87, 0.15);
+    border: none;
+    color: var(--danger);
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  
+  .cue-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 6px;
+    background: rgba(123, 47, 247, 0.2);
+    color: #b794f6;
+    border-radius: 5px;
+    font-size: 8.5px;
+    font-weight: 800;
+    margin-left: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    vertical-align: middle;
+  }
+  
+  /* ====== BUTTONS ====== */
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 50px;
+    font-family: inherit;
+  }
+  
+  .btn:active:not(:disabled) { transform: scale(0.97); }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.25);
+  }
+  
+  .btn-primary:disabled { opacity: 0.4; box-shadow: none; cursor: not-allowed; }
+  
+  .btn-secondary {
+    background: var(--input-bg);
+    color: var(--text-mid);
+    border: 1px solid var(--card-border);
+    min-height: 42px;
+    font-size: 12px;
+    padding: 10px;
+  }
+  
+  .btn-danger {
+    background: rgba(255, 71, 87, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+  }
+  
+  .btn-success {
+    background: rgba(0, 255, 127, 0.15);
+    color: var(--success);
+    border: 1px solid rgba(0, 255, 127, 0.3);
+  }
+  
+  .btn-row {
+    display: flex;
+    gap: 7px;
+    margin-top: 10px;
+  }
+  
+  .btn-row .btn { flex: 1; }
+  
+  /* ====== PROGRESS ====== */
+  .progress-container { display: none; margin-top: 12px; }
+  .progress-container.show { display: block; }
+  
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--input-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    transition: width 0.2s ease;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  .progress-text {
+    font-size: 10.5px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  .progress-overall {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: rgba(123, 47, 247, 0.08);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-2);
+    font-size: 10.5px;
+    color: var(--text-mid);
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  /* ====== STATUS ====== */
+  .status {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 11.5px;
+    display: none;
+    text-align: center;
+    line-height: 1.5;
+    font-weight: 600;
+  }
+  
+  .status.show { display: block; }
+  .status.success { background: rgba(0, 255, 127, 0.1); border-left: 3px solid var(--success); color: var(--success); }
+  .status.error { background: rgba(255, 71, 87, 0.1); border-left: 3px solid var(--danger); color: var(--danger); }
+  .status.info { background: rgba(0, 212, 255, 0.1); border-left: 3px solid var(--info); color: var(--info); }
+  .status.warning { background: rgba(255, 184, 77, 0.1); border-left: 3px solid var(--warning); color: var(--warning); }
+  
+  /* ====== INFO BOX ====== */
+  .info-box {
+    font-size: 10.5px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    padding: 11px 12px;
+    background: var(--input-bg);
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+  }
+  
+  .info-box strong { color: var(--accent-1); font-weight: 700; }
+  .info-box em { color: var(--text-mid); font-style: normal; font-weight: 600; }
+  
+  /* ====== SPINNER ====== */
+  .spinner {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  @keyframes spin { to { transform: rotate(360deg); } }
+  
+  /* ====== INSTALL BANNER ====== */
+  .install-banner {
+    display: none;
+    padding: 11px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 47, 247, 0.1));
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 12px;
+    font-size: 11px;
+    color: var(--text-mid);
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+  
+  .install-banner.show { display: flex; }
+  .install-banner button {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #fff;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  
+  .panel { display: none; }
+  .panel.active { display: block; }
+  
+  /* ====== ADVANCED OPTIONS ====== */
+  .advanced-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-mid);
+    transition: all 0.2s;
+  }
+  
+  .advanced-toggle:active { transform: scale(0.98); }
+  
+  .advanced-toggle .arrow {
+    transition: transform 0.3s ease;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  
+  .advanced-toggle.open .arrow { transform: rotate(180deg); }
+  
+  .advanced-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  
+  .advanced-content.open { max-height: 800px; }
+  
+  .advanced-inner {
+    padding: 12px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* ====== HASH DISPLAY ====== */
+  .hash-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    background: var(--input-bg);
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+  }
+  
+  .hash-row .hash-label {
+    font-size: 9.5px;
+    font-weight: 800;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .hash-row .hash-value {
+    font-family: 'SF Mono', Menlo, Monaco, Consolas, monospace;
+    font-size: 10px;
+    color: var(--text-mid);
+    word-break: break-all;
+    line-height: 1.4;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 6px;
+    user-select: all;
+  }
+  
+  [data-theme="light"] .hash-row .hash-value {
+    background: rgba(0, 0, 0, 0.04);
+  }
+  
+  /* ====== MODAL ====== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+  }
+  
+  .modal-overlay.show { display: flex; }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .modal {
+    background: var(--bg-2);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 20px;
+    max-width: 440px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  .modal h2 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: var(--text-main);
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .modal .modal-body {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--text-mid);
+  }
+  
+  .modal .modal-body h3 {
+    font-size: 13px;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    color: var(--accent-1);
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .modal .modal-body p { margin-bottom: 8px; }
+  
+  .modal .modal-body ul {
+    padding-left: 18px;
+    margin-bottom: 8px;
+  }
+  
+  .modal .modal-body li { margin-bottom: 4px; }
+  
+  .modal .modal-body code {
+    background: var(--input-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Menlo, Monaco, monospace;
+    font-size: 10.5px;
+    color: var(--accent-1);
+  }
+  
+  .modal .close-btn {
+    margin-top: 16px;
+    width: 100%;
+  }
+  
+  /* ====== AUDIO TRACKS LIST ====== */
+  .audio-tracks {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .audio-track {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 11px;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    font-size: 11px;
+    color: var(--text-mid);
+  }
+  
+  .audio-track .at-num {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #fff;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  
+  .audio-track .at-info { flex: 1; }
+  .audio-track .at-info .at-title {
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .audio-track .at-info .at-meta {
+    font-size: 9.5px;
+    color: var(--text-dim);
+    margin-top: 1px;
+  }
+  
+  /* ====== TOGGLE SWITCH ====== */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 11px;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+  }
+  
+  .toggle-row .tl-info { flex: 1; }
+  .toggle-row .tl-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-mid);
+  }
+  .toggle-row .tl-desc {
+    font-size: 9.5px;
+    color: var(--text-faint);
+    margin-top: 2px;
+  }
+  
+  .toggle-switch {
+    position: relative;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .toggle-switch .slider {
+    position: absolute;
+    inset: 0;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .toggle-switch .slider:before {
+    content: '';
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background: var(--text-dim);
+    border-radius: 50%;
+    transition: 0.3s;
+  }
+  
+  .toggle-switch input:checked + .slider {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    border-color: transparent;
+  }
+  
+  .toggle-switch input:checked + .slider:before {
+    transform: translateX(18px);
+    background: #fff;
+  }
+  
+  /* ====== EMPTY STATE ====== */
+  .empty-state {
+    padding: 16px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-faint);
+    font-style: italic;
+  }
+  
+  /* ====== FOOTER ====== */
+  .footer {
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-faint);
+    padding: 8px 0 4px;
+    line-height: 1.6;
+  }
+  
+  .footer a {
+    color: var(--accent-1);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  
+  /* ====== FAB (Floating Action Button) ====== */
+  .fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #fff;
+    border: none;
+    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.4);
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: transform 0.2s ease;
+  }
+  
+  .fab:active { transform: scale(0.9); }
+  
+  /* ====== BADGE COUNTER ====== */
+  .counter-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    background: rgba(0, 212, 255, 0.15);
+    color: var(--accent-1);
+    border-radius: 10px;
+    font-size: 9.5px;
+    font-weight: 800;
+    margin-left: 5px;
+  }
+  
+  .preset-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  
+  .preset-chip {
+    padding: 8px 12px;
+    background: var(--input-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .preset-chip:active {
+    transform: scale(0.94);
+  }
+  
+  .preset-chip.active {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+  }
+  
+  .preset-chip .chip-emoji {
+    font-size: 13px;
+  }
+  
+  .lang-select {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--input-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 10px;
+    color: var(--text-mid);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+  }
+  
+  .lang-select option {
+    background: var(--bg-2);
+    color: var(--text-main);
+  }
+</style>
+</head>
+<body>
 
+<div class="container">
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <h1>💿 BIN ↔ ISO</h1>
+      <p>Ultimate Disc Image Converter</p>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="langBtn" title="Language">🌐</button>
+      <button class="icon-btn" id="themeBtn" title="Ganti tema">🌙</button>
+      <button class="icon-btn" id="helpBtn" title="Bantuan">❓</button>
+    </div>
+  </header>
+
+  <!-- INSTALL BANNER (dihapus) -->
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" data-tab="bin2iso">📀 BIN → ISO</button>
+    <button class="tab" data-tab="iso2bin">💾 ISO → BIN</button>
+    <button class="tab" data-tab="audio">🎵 Audio</button>
+  </div>
+
+  <!-- ============ PANEL: BIN → ISO ============ -->
+  <div class="panel active" id="panel-bin2iso">
+    <div class="card">
+      <div class="section-title">🎯 Preset Cepat <span class="badge">BATCH</span></div>
+      <div class="preset-chips" id="presetsBin">
+        <button class="preset-chip" data-preset="ps1"><span class="chip-emoji">🎮</span>PS1</button>
+        <button class="preset-chip" data-preset="ps2"><span class="chip-emoji">🎮</span>PS2</button>
+        <button class="preset-chip" data-preset="segacd"><span class="chip-emoji">💽</span>Sega CD</button>
+        <button class="preset-chip" data-preset="dreamcast"><span class="chip-emoji">🌀</span>Dreamcast</button>
+        <button class="preset-chip" data-preset="safe"><span class="chip-emoji">🛡️</span>Safe Mode</button>
+        <button class="preset-chip" data-preset="fast"><span class="chip-emoji">⚡</span>Fast Mode</button>
+      </div>
+
+      <div class="section-title" style="margin-top:14px;">⚙️ Mode Sektor</div>
+      <div class="radio-group cols-2">
+        <label class="radio-btn selected" data-group="bin2iso-mode">
+          <input type="radio" name="bin2iso-mode" value="auto" checked>
+          <span class="rb-title">🤖 Auto</span>
+          <span class="rb-desc">Deteksi otomatis</span>
+        </label>
+        <label class="radio-btn" data-group="bin2iso-mode">
+          <input type="radio" name="bin2iso-mode" value="mode1">
+          <span class="rb-title">Mode 1</span>
+          <span class="rb-desc">2352 B/sector</span>
+        </label>
+        <label class="radio-btn" data-group="bin2iso-mode">
+          <input type="radio" name="bin2iso-mode" value="mode2">
+          <span class="rb-title">Mode 2</span>
+          <span class="rb-desc">Form 1</span>
+        </label>
+        <label class="radio-btn" data-group="bin2iso-mode">
+          <input type="radio" name="bin2iso-mode" value="2048">
+          <span class="rb-title">Raw ISO</span>
+          <span class="rb-desc">2048 B/sector</span>
+        </label>
+      </div>
+
+      <div class="drop-zone" id="dropZoneBin">
+        <span class="icon">📁</span>
+        <div class="title">Pilih file BIN / CUE</div>
+        <div class="subtitle">Multi-file didukung · Drag & drop</div>
+      </div>
+      <input type="file" id="fileInputBin" accept=".bin,.cue,application/octet-stream" multiple>
+      
+      <div class="file-list" id="fileListBin"></div>
+      
+      <div class="btn-row" id="actionsBin" style="display:none;">
+        <button class="btn btn-secondary" id="clearBin">🗑️ Hapus Semua</button>
+        <button class="btn btn-success" id="zipBin">📦 Export ZIP</button>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="convertBinBtn" disabled style="margin-top:12px;">
+      🚀 Konversi ke ISO
+    </button>
+
+    <div class="progress-container" id="progressContainerBin">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFillBin"></div>
+      </div>
+      <div class="progress-text" id="progressTextBin">0%</div>
+      <div class="progress-overall" id="progressOverallBin" style="display:none;"></div>
+    </div>
+
+    <div class="status" id="statusBin"></div>
+  </div>
+
+  <!-- ============ PANEL: ISO → BIN ============ -->
+  <div class="panel" id="panel-iso2bin">
+    <div class="card">
+      <div class="section-title">🎯 Preset Cepat <span class="badge">BATCH</span></div>
+      <div class="preset-chips" id="presetsIso">
+        <button class="preset-chip" data-preset="ps1"><span class="chip-emoji">🎮</span>PS1</button>
+        <button class="preset-chip" data-preset="ps2"><span class="chip-emoji">🎮</span>PS2</button>
+        <button class="preset-chip" data-preset="burn"><span class="chip-emoji">💿</span>Burning</button>
+        <button class="preset-chip" data-preset="safe"><span class="chip-emoji">🛡️</span>Safe Mode</button>
+        <button class="preset-chip" data-preset="fast"><span class="chip-emoji">⚡</span>Fast Mode</button>
+      </div>
+
+      <div class="section-title" style="margin-top:14px;">⚙️ Mode Output</div>
+      <div class="radio-group cols-2">
+        <label class="radio-btn selected" data-group="iso2bin-mode">
+          <input type="radio" name="iso2bin-mode" value="mode1" checked>
+          <span class="rb-title">Mode 1</span>
+          <span class="rb-desc">+ ECC full</span>
+        </label>
+        <label class="radio-btn" data-group="iso2bin-mode">
+          <input type="radio" name="iso2bin-mode" value="mode2">
+          <span class="rb-title">Mode 2</span>
+          <span class="rb-desc">Form 1 + ECC</span>
+        </label>
+      </div>
+
+      <div class="drop-zone" id="dropZoneIso">
+        <span class="icon">💾</span>
+        <div class="title">Pilih file ISO</div>
+        <div class="subtitle">Multi-file didukung · Drag & drop</div>
+      </div>
+      <input type="file" id="fileInputIso" accept=".iso,application/octet-stream" multiple>
+      
+      <div class="file-list" id="fileListIso"></div>
+      
+      <div class="btn-row" id="actionsIso" style="display:none;">
+        <button class="btn btn-secondary" id="clearIso">🗑️ Hapus Semua</button>
+        <button class="btn btn-success" id="zipIso">📦 Export ZIP</button>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="convertIsoBtn" disabled style="margin-top:12px;">
+      🚀 Konversi ke BIN
+    </button>
+
+    <div class="progress-container" id="progressContainerIso">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFillIso"></div>
+      </div>
+      <div class="progress-text" id="progressTextIso">0%</div>
+      <div class="progress-overall" id="progressOverallIso" style="display:none;"></div>
+    </div>
+
+    <div class="status" id="statusIso"></div>
+  </div>
+
+  <!-- ============ PANEL: AUDIO TRACKS ============ -->
+  <div class="panel" id="panel-audio">
+    <div class="card">
+      <div class="section-title">🎵 Ekstrak Audio dari BIN Multi-Track</div>
+      <p style="font-size:11px; color:var(--text-dim); line-height:1.6; margin-bottom:10px;">
+        Upload file <em>.cue</em> + <em>.bin</em> untuk mengekstrak track audio (CD-DA) menjadi file WAV.
+      </p>
+
+      <div class="drop-zone" id="dropZoneAudio">
+        <span class="icon">🎵</span>
+        <div class="title">Pilih CUE + BIN</div>
+        <div class="subtitle">Untuk ekstraksi track audio</div>
+      </div>
+      <input type="file" id="fileInputAudio" accept=".cue,.bin,application/octet-stream" multiple>
+      
+      <div class="audio-tracks" id="audioTracksList"></div>
+    </div>
+
+    <button class="btn btn-primary" id="extractAudioBtn" disabled style="margin-top:12px;">
+      🎧 Ekstrak Semua Track Audio
+    </button>
+
+    <div class="progress-container" id="progressContainerAudio">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFillAudio"></div>
+      </div>
+      <div class="progress-text" id="progressTextAudio">0%</div>
+      <div class="progress-overall" id="progressOverallAudio" style="display:none;"></div>
+    </div>
+
+    <div class="status" id="statusAudio"></div>
+  </div>
+
+  <!-- ============ ADVANCED OPTIONS ============ -->
+  <div class="card">
+    <div class="advanced-toggle" id="advancedToggle">
+      <span>⚡ Opsi Lanjutan</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="advanced-content" id="advancedContent">
+      <div class="advanced-inner">
+        <div class="config-block">
+          <div class="section-title">🌐 Bahasa / Language</div>
+          <select class="lang-select" id="langSelect">
+            <option value="id">🇮🇩 Bahasa Indonesia</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="zh">🇨🇳 中文</option>
+          </select>
+        </div>
+
+        <div class="toggle-row">
+          <div class="tl-info">
+            <div class="tl-title">🔐 Hitung Hash</div>
+            <div class="tl-desc">MD5 + SHA-1 dari file hasil</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="optHash">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="tl-info">
+            <div class="tl-title">✅ Verifikasi Setelah Konversi</div>
+            <div class="tl-desc">Cek ukuran & struktur hasil</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="optVerify">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="tl-info">
+            <div class="tl-title">🗜️ Kompresi ZIP</div>
+            <div class="tl-desc">Gunakan kompresi saat export ZIP</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="optZipCompress">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="tl-info">
+            <div class="tl-title">🔇 Skip ECC</div>
+            <div class="tl-desc">Lebih cepat tapi kurang akurat</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="optSkipEcc">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="hash-row" id="hashDisplay" style="display:none;">
+          <div class="hash-label">MD5</div>
+          <div class="hash-value" id="md5Value">—</div>
+          <div class="hash-label" style="margin-top:6px;">SHA-1</div>
+          <div class="hash-value" id="sha1Value">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO BOX -->
+  <div class="info-box" id="infoBox">
+    <strong>ℹ️ Info:</strong> BIN (raw) berisi 2352 B/sector dengan sync + header + data + ECC. ISO hanya berisi data user 2048 B/sector. Mode <em>Auto</em> mendeteksi dari sync pattern.
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Bin2iso by Randy CreativeTech @2026<br>
+    Made with 💙 untuk komunitas retro gaming<br>
+    <span style="font-size:9px;">ECC sesuai ECMA-130 Annex A · Kompatibel cdrdao & ecm</span>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fabBtn" title="Scroll to top">↑</button>
+
+<!-- MODAL HELP -->
+<div class="modal-overlay" id="helpModal">
+  <div class="modal">
+    <h2>📖 Panduan Penggunaan</h2>
+    <div class="modal-body">
+      <h3>📀 BIN → ISO</h3>
+      <p>Konversi file disc image BIN (raw 2352 B/sector) menjadi ISO standar (2048 B/sector).</p>
+      <ul>
+        <li>Upload <code>.bin</code> — bisa multiple sekaligus</li>
+        <li>Jika ada <code>.cue</code>, upload bersamaan agar mode terdeteksi</li>
+        <li>Mode <strong>Auto</strong> = deteksi dari sync pattern</li>
+      </ul>
+
+      <h3>💾 ISO → BIN</h3>
+      <p>Konversi ISO standar menjadi BIN raw dengan ECC akurat.</p>
+      <ul>
+        <li>Mode 1: sync + header + data + EDC + ECC</li>
+        <li>Mode 2 Form 1: + subheader, kompatibel PS2</li>
+      </ul>
+
+      <h3>🎵 Audio Extraction</h3>
+      <p>Ekstrak track audio (CD-DA) dari BIN multi-track menjadi WAV.</p>
+      <ul>
+        <li>Butuh file <code>.cue</code> + <code>.bin</code> berpasangan</li>
+        <li>WAV output: 44.1 kHz, 16-bit, stereo</li>
+      </ul>
+
+      <h3>⚡ Opsi Lanjutan</h3>
+      <ul>
+        <li><strong>Hash:</strong> hitung MD5 & SHA-1 hasil untuk verifikasi</li>
+        <li><strong>Verifikasi:</strong> cek integritas file hasil konversi</li>
+        <li><strong>ZIP:</strong> export batch ke file ZIP tunggal</li>
+        <li><strong>Skip ECC:</strong> konversi cepat tanpa ECC (kurang akurat)</li>
+      </ul>
+
+
+      <h3>💡 Tips</h3>
+      <ul>
+        <li>File besar (> 2 GB) sebaiknya diproses satu per satu</li>
+        <li>Untuk PS1, gunakan Mode 1</li>
+        <li>Untuk PS2, gunakan Mode 2 Form 1</li>
+        <li>Hasil konversi otomatis terunduh ke folder Download</li>
+      </ul>
+    </div>
+    <button class="btn btn-primary close-btn" id="closeHelp">Mengerti</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+// ============================================================
+// KONSTANTA
+// ============================================================
+const SECTOR_BIN = 2352;
+const SECTOR_ISO = 2048;
+const SYNC_HEADER = new Uint8Array([
+  0x00,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00
+]);
+
+// ============================================================
+// PRESET CONFIG
+// ============================================================
+const PRESETS = {
+  'ps1':       { icon: '🎮', binMode: 'mode1',  isoMode: 'mode1', hash: false, verify: true,  zip: false, skipEcc: false },
+  'ps2':       { icon: '🎮', binMode: 'mode2',  isoMode: 'mode2', hash: false, verify: true,  zip: false, skipEcc: false },
+  'segacd':    { icon: '💽', binMode: 'mode1',  isoMode: 'mode1', hash: false, verify: false, zip: false, skipEcc: false },
+  'dreamcast': { icon: '🌀', binMode: 'mode1',  isoMode: 'mode1', hash: true,  verify: true,  zip: true,  skipEcc: false },
+  'burn':      { icon: '💿', binMode: 'mode1',  isoMode: 'mode1', hash: true,  verify: true,  zip: false, skipEcc: false },
+  'safe':      { icon: '🛡️', binMode: 'auto',   isoMode: 'mode1', hash: true,  verify: true,  zip: true,  skipEcc: false },
+  'fast':      { icon: '⚡', binMode: 'mode1',  isoMode: 'mode1', hash: false, verify: false, zip: false, skipEcc: true  }
+};
+
+// ============================================================
+// I18N (Multi-bahasa)
+// ============================================================
+const I18N = {
+  id: {
+    subtitle: 'Ultimate Disc Image Converter',
+    tabBin2Iso: '📀 BIN → ISO',
+    tabIso2Bin: '💾 ISO → BIN',
+    tabAudio: '🎵 Audio',
+    presetTitle: '🎯 Preset Cepat',
+    modeSectorTitle: '⚙️ Mode Sektor',
+    modeOutputTitle: '⚙️ Mode Output',
+    dropBin: 'Pilih file BIN / CUE',
+    dropIso: 'Pilih file ISO',
+    dropAudio: 'Pilih CUE + BIN',
+    dropSubBin: 'Multi-file didukung · Drag & drop',
+    dropSubIso: 'Multi-file didukung · Drag & drop',
+    dropSubAudio: 'Untuk ekstraksi track audio',
+    convertToIso: '🚀 Konversi ke ISO',
+    convertToBin: '🚀 Konversi ke BIN',
+    extractAudio: '🎧 Ekstrak Semua Track Audio',
+    clearAll: '🗑️ Hapus Semua',
+    exportZip: '📦 Export ZIP',
+    advancedOpts: '⚡ Opsi Lanjutan',
+    langLabel: '🌐 Bahasa / Language',
+    hashLabel: '🔐 Hitung Hash',
+    verifyLabel: '✅ Verifikasi Setelah Konversi',
+    zipCompressLabel: '🗜️ Kompresi ZIP',
+    skipEccLabel: '🔇 Skip ECC',
+    emptyList: 'Belum ada file',
+    statusReady: 'Siap',
+    statusProcessing: 'Proses',
+    statusDone: '✓ Selesai',
+    statusError: '✗ Gagal'
+  },
+  en: {
+    subtitle: 'Ultimate Disc Image Converter',
+    tabBin2Iso: '📀 BIN → ISO',
+    tabIso2Bin: '💾 ISO → BIN',
+    tabAudio: '🎵 Audio',
+    presetTitle: '🎯 Quick Presets',
+    modeSectorTitle: '⚙️ Sector Mode',
+    modeOutputTitle: '⚙️ Output Mode',
+    dropBin: 'Select BIN / CUE file',
+    dropIso: 'Select ISO file',
+    dropAudio: 'Select CUE + BIN',
+    dropSubBin: 'Multi-file supported · Drag & drop',
+    dropSubIso: 'Multi-file supported · Drag & drop',
+    dropSubAudio: 'For audio track extraction',
+    convertToIso: '🚀 Convert to ISO',
+    convertToBin: '🚀 Convert to BIN',
+    extractAudio: '🎧 Extract All Audio Tracks',
+    clearAll: '🗑️ Clear All',
+    exportZip: '📦 Export ZIP',
+    advancedOpts: '⚡ Advanced Options',
+    langLabel: '🌐 Language',
+    hashLabel: '🔐 Compute Hash',
+    verifyLabel: '✅ Verify After Conversion',
+    zipCompressLabel: '🗜️ ZIP Compression',
+    skipEccLabel: '🔇 Skip ECC',
+    emptyList: 'No files yet',
+    statusReady: 'Ready',
+    statusProcessing: 'Processing',
+    statusDone: '✓ Done',
+    statusError: '✗ Failed'
+  },
+  ja: {
+    subtitle: '究極のディスクイメージコンバーター',
+    tabBin2Iso: '📀 BIN → ISO',
+    tabIso2Bin: '💾 ISO → BIN',
+    tabAudio: '🎵 オーディオ',
+    presetTitle: '🎯 クイックプリセット',
+    modeSectorTitle: '⚙️ セクターモード',
+    modeOutputTitle: '⚙️ 出力モード',
+    dropBin: 'BIN / CUE ファイルを選択',
+    dropIso: 'ISO ファイルを選択',
+    dropAudio: 'CUE + BIN を選択',
+    dropSubBin: '複数ファイル対応 · ドラッグ&ドロップ',
+    dropSubIso: '複数ファイル対応 · ドラッグ&ドロップ',
+    dropSubAudio: 'オーディオトラック抽出用',
+    convertToIso: '🚀 ISO に変換',
+    convertToBin: '🚀 BIN に変換',
+    extractAudio: '🎧 全オーディオトラック抽出',
+    clearAll: '🗑️ すべて削除',
+    exportZip: '📦 ZIP エクスポート',
+    advancedOpts: '⚡ 詳細オプション',
+    langLabel: '🌐 言語',
+    hashLabel: '🔐 ハッシュ計算',
+    verifyLabel: '✅ 変換後に検証',
+    zipCompressLabel: '🗜️ ZIP 圧縮',
+    skipEccLabel: '🔇 ECC スキップ',
+    emptyList: 'ファイルなし',
+    statusReady: '準備完了',
+    statusProcessing: '処理中',
+    statusDone: '✓ 完了',
+    statusError: '✗ 失敗'
+  },
+  es: {
+    subtitle: 'Convertidor Definitivo de Imágenes de Disco',
+    tabBin2Iso: '📀 BIN → ISO',
+    tabIso2Bin: '💾 ISO → BIN',
+    tabAudio: '🎵 Audio',
+    presetTitle: '🎯 Presets Rápidos',
+    modeSectorTitle: '⚙️ Modo de Sector',
+    modeOutputTitle: '⚙️ Modo de Salida',
+    dropBin: 'Seleccionar archivo BIN / CUE',
+    dropIso: 'Seleccionar archivo ISO',
+    dropAudio: 'Seleccionar CUE + BIN',
+    dropSubBin: 'Multi-archivo · Arrastrar y soltar',
+    dropSubIso: 'Multi-archivo · Arrastrar y soltar',
+    dropSubAudio: 'Para extracción de pistas de audio',
+    convertToIso: '🚀 Convertir a ISO',
+    convertToBin: '🚀 Convertir a BIN',
+    extractAudio: '🎧 Extraer Todas las Pistas',
+    clearAll: '🗑️ Borrar Todo',
+    exportZip: '📦 Exportar ZIP',
+    advancedOpts: '⚡ Opciones Avanzadas',
+    langLabel: '🌐 Idioma',
+    hashLabel: '🔐 Calcular Hash',
+    verifyLabel: '✅ Verificar Después',
+    zipCompressLabel: '🗜️ Compresión ZIP',
+    skipEccLabel: '🔇 Omitir ECC',
+    emptyList: 'Sin archivos',
+    statusReady: 'Listo',
+    statusProcessing: 'Procesando',
+    statusDone: '✓ Hecho',
+    statusError: '✗ Falló'
+  },
+  zh: {
+    subtitle: '终极光盘镜像转换器',
+    tabBin2Iso: '📀 BIN → ISO',
+    tabIso2Bin: '💾 ISO → BIN',
+    tabAudio: '🎵 音频',
+    presetTitle: '🎯 快速预设',
+    modeSectorTitle: '⚙️ 扇区模式',
+    modeOutputTitle: '⚙️ 输出模式',
+    dropBin: '选择 BIN / CUE 文件',
+    dropIso: '选择 ISO 文件',
+    dropAudio: '选择 CUE + BIN',
+    dropSubBin: '支持多文件 · 拖放',
+    dropSubIso: '支持多文件 · 拖放',
+    dropSubAudio: '用于提取音轨',
+    convertToIso: '🚀 转换为 ISO',
+    convertToBin: '🚀 转换为 BIN',
+    extractAudio: '🎧 提取所有音轨',
+    clearAll: '🗑️ 全部清除',
+    exportZip: '📦 导出 ZIP',
+    advancedOpts: '⚡ 高级选项',
+    langLabel: '🌐 语言',
+    hashLabel: '🔐 计算哈希',
+    verifyLabel: '✅ 转换后验证',
+    zipCompressLabel: '🗜️ ZIP 压缩',
+    skipEccLabel: '🔇 跳过 ECC',
+    emptyList: '暂无文件',
+    statusReady: '就绪',
+    statusProcessing: '处理中',
+    statusDone: '✓ 完成',
+    statusError: '✗ 失败'
+  }
+};
+
+let currentLang = localStorage.getItem('lang') || 'id';
+
+function t(key) {
+  return (I18N[currentLang] && I18N[currentLang][key]) || I18N.id[key] || key;
+}
+
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  activeTab: 'bin2iso',
+  theme: localStorage.getItem('theme') || 'dark',
+  options: {
+    hash: localStorage.getItem('optHash') === 'true',
+    verify: localStorage.getItem('optVerify') === 'true',
+    zipCompress: localStorage.getItem('optZipCompress') !== 'false',
+    skipEcc: localStorage.getItem('optSkipEcc') === 'true'
+  },
+  bin2iso: { files: [], mode: 'auto', converting: false, results: [] },
+  iso2bin: { files: [], mode: 'mode1', converting: false, results: [] },
+  audio: { files: [], tracks: [], binFile: null, cueFile: null, converting: false }
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+const $ = (id) => document.getElementById(id);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+// ============================================================
+// ELEMEN
+// ============================================================
+const els = {
+  tabs: $$('.tab'),
+  panels: {
+    bin2iso: $('panel-bin2iso'),
+    iso2bin: $('panel-iso2bin'),
+    audio: $('panel-audio')
+  },
+  bin: {
+    dropZone: $('dropZoneBin'), input: $('fileInputBin'), list: $('fileListBin'),
+    actions: $('actionsBin'), clear: $('clearBin'), zip: $('zipBin'),
+    convertBtn: $('convertBinBtn'), progress: $('progressContainerBin'),
+    fill: $('progressFillBin'), text: $('progressTextBin'),
+    overall: $('progressOverallBin'), status: $('statusBin')
+  },
+  iso: {
+    dropZone: $('dropZoneIso'), input: $('fileInputIso'), list: $('fileListIso'),
+    actions: $('actionsIso'), clear: $('clearIso'), zip: $('zipIso'),
+    convertBtn: $('convertIsoBtn'), progress: $('progressContainerIso'),
+    fill: $('progressFillIso'), text: $('progressTextIso'),
+    overall: $('progressOverallIso'), status: $('statusIso')
+  },
+  audio: {
+    dropZone: $('dropZoneAudio'), input: $('fileInputAudio'),
+    list: $('audioTracksList'),
+    extractBtn: $('extractAudioBtn'), progress: $('progressContainerAudio'),
+    fill: $('progressFillAudio'), text: $('progressTextAudio'),
+    overall: $('progressOverallAudio'), status: $('statusAudio')
+  },
+  infoBox: $('infoBox'),
+  themeBtn: $('themeBtn'),
+  helpBtn: $('helpBtn'),
+  helpModal: $('helpModal'),
+  closeHelp: $('closeHelp'),
+  advancedToggle: $('advancedToggle'),
+  advancedContent: $('advancedContent'),
+  hashDisplay: $('hashDisplay'),
+  md5Value: $('md5Value'),
+  sha1Value: $('sha1Value'),
+  optHash: $('optHash'),
+  optVerify: $('optVerify'),
+  optZipCompress: $('optZipCompress'),
+  optSkipEcc: $('optSkipEcc'),
+  fabBtn: $('fabBtn'),
+  presetsBin: $('presetsBin'),
+  presetsIso: $('presetsIso'),
+  langSelect: $('langSelect')
+};
+
+// ============================================================
+// THEME
+// ============================================================
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  els.themeBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
+  state.theme = theme;
+  localStorage.setItem('theme', theme);
+}
+
+applyTheme(state.theme);
+
+els.themeBtn.addEventListener('click', () => {
+  applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+});
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+els.tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    state.activeTab = target;
+    els.tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === target));
+    Object.entries(els.panels).forEach(([key, panel]) => {
+      panel.classList.toggle('active', key === target);
+    });
+    updateInfoBox(target);
+  });
+});
+
+function updateInfoBox(tab) {
+  const infos = {
+    bin2iso: '<strong>ℹ️ Info:</strong> BIN (raw) berisi 2352 B/sector. Mode <em>Auto</em> mendeteksi dari sync pattern. Jika upload <em>.cue</em>, mode dibaca dari CUE. Output: ISO 2048 B/sector.',
+    iso2bin: '<strong>ℹ️ Info:</strong> ISO 2048 B/sector dikonversi ke BIN 2352 B/sector dengan sync + header + EDC/ECC penuh (ECMA-130 Annex A). Ukuran naik ~15%.',
+    audio: '<strong>ℹ️ Info:</strong> Ekstrak track audio (CD-DA) dari BIN multi-track ke WAV. Butuh <em>.cue</em> + <em>.bin</em>. Output: 44.1 kHz, 16-bit, stereo.'
+  };
+  els.infoBox.innerHTML = infos[tab] || infos.bin2iso;
+}
+
+// ============================================================
+// RADIO BUTTON
+// ============================================================
+$$('.radio-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const group = btn.dataset.group;
+    const input = btn.querySelector('input');
+    const value = input.value;
+    // Set checked ke input radio juga (agar sync kalau dibaca ulang)
+    input.checked = true;
+    $$(`.radio-btn[data-group="${group}"]`).forEach(b => b.classList.toggle('selected', b === btn));
+    if (group === 'bin2iso-mode') state.bin2iso.mode = value;
+    if (group === 'iso2bin-mode') state.iso2bin.mode = value;
+  });
+});
+
+// ============================================================
+// ADVANCED OPTIONS
+// ============================================================
+els.advancedToggle.addEventListener('click', () => {
+  els.advancedToggle.classList.toggle('open');
+  els.advancedContent.classList.toggle('open');
+});
+
+function setupToggle(el, key) {
+  el.checked = state.options[key];
+  el.addEventListener('change', () => {
+    state.options[key] = el.checked;
+    localStorage.setItem('opt' + key.charAt(0).toUpperCase() + key.slice(1), el.checked);
+    if (key === 'hash') {
+      els.hashDisplay.style.display = el.checked ? 'flex' : 'none';
+    }
+  });
+}
+
+setupToggle(els.optHash, 'hash');
+setupToggle(els.optVerify, 'verify');
+setupToggle(els.optZipCompress, 'zipCompress');
+setupToggle(els.optSkipEcc, 'skipEcc');
+
+// ============================================================
+// PRESET HANDLER
+// ============================================================
+function applyPreset(presetKey, targetType) {
+  const p = PRESETS[presetKey];
+  if (!p) return;
+  
+  // Update radio mode
+  if (targetType === 'bin') {
+    state.bin2iso.mode = p.binMode;
+    $$('.radio-btn[data-group="bin2iso-mode"]').forEach(b => {
+      const inp = b.querySelector('input');
+      const match = inp.value === p.binMode;
+      b.classList.toggle('selected', match);
+      inp.checked = match;
+    });
+  } else {
+    state.iso2bin.mode = p.isoMode;
+    $$('.radio-btn[data-group="iso2bin-mode"]').forEach(b => {
+      const inp = b.querySelector('input');
+      const match = inp.value === p.isoMode;
+      b.classList.toggle('selected', match);
+      inp.checked = match;
+    });
+  }
+  
+  // Update toggles
+  state.options.hash = p.hash;
+  state.options.verify = p.verify;
+  state.options.zipCompress = p.zip;
+  state.options.skipEcc = p.skipEcc;
+  
+  els.optHash.checked = p.hash;
+  els.optVerify.checked = p.verify;
+  els.optZipCompress.checked = p.zip;
+  els.optSkipEcc.checked = p.skipEcc;
+  
+  els.hashDisplay.style.display = p.hash ? 'flex' : 'none';
+  
+  // Update visual chip
+  const container = targetType === 'bin' ? els.presetsBin : els.presetsIso;
+  if (container) {
+    container.querySelectorAll('.preset-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.preset === presetKey);
+    });
+  }
+  
+  // Show toast
+  showStatus(targetType === 'bin' ? 'bin' : 'iso', 
+    `✨ Preset "${presetKey.toUpperCase()}" ${currentLang === 'en' ? 'applied' : 'diterapkan'}`, 'success');
+}
+
+$$('#presetsBin .preset-chip').forEach(chip => {
+  chip.addEventListener('click', () => applyPreset(chip.dataset.preset, 'bin'));
+});
+
+$$('#presetsIso .preset-chip').forEach(chip => {
+  chip.addEventListener('click', () => applyPreset(chip.dataset.preset, 'iso'));
+});
+
+// ============================================================
+// LANGUAGE HANDLER
+// ============================================================
+function applyLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  
+  // Update UI text
+  const headerSub = document.querySelector('.header-left p');
+  if (headerSub) headerSub.textContent = t('subtitle');
+  
+  const tabs = $$('.tab');
+  if (tabs[0]) tabs[0].textContent = t('tabBin2Iso');
+  if (tabs[1]) tabs[1].textContent = t('tabIso2Bin');
+  if (tabs[2]) tabs[2].textContent = t('tabAudio');
+  
+  // Panel titles
+  const presetTitles = $$('.section-title');
+  // Update all preset titles
+  document.querySelectorAll('#presetsBin, #presetsIso').forEach(p => {
+    const title = p.previousElementSibling;
+    if (title && title.classList.contains('section-title') && title.childNodes[0]) {
+      title.childNodes[0].textContent = t('presetTitle') + ' ';
+    }
+  });
+  
+  // Dropzone titles
+  const dzBin = document.querySelector('#dropZoneBin .title');
+  const dzIso = document.querySelector('#dropZoneIso .title');
+  const dzAudio = document.querySelector('#dropZoneAudio .title');
+  if (dzBin) dzBin.textContent = t('dropBin');
+  if (dzIso) dzIso.textContent = t('dropIso');
+  if (dzAudio) dzAudio.textContent = t('dropAudio');
+  
+  const dzBinSub = document.querySelector('#dropZoneBin .subtitle');
+  const dzIsoSub = document.querySelector('#dropZoneIso .subtitle');
+  const dzAudioSub = document.querySelector('#dropZoneAudio .subtitle');
+  if (dzBinSub) dzBinSub.textContent = t('dropSubBin');
+  if (dzIsoSub) dzIsoSub.textContent = t('dropSubIso');
+  if (dzAudioSub) dzAudioSub.textContent = t('dropSubAudio');
+  
+  // Buttons
+  if (els.bin.convertBtn && !state.bin2iso.converting) els.bin.convertBtn.textContent = t('convertToIso');
+  if (els.iso.convertBtn && !state.iso2bin.converting) els.iso.convertBtn.textContent = t('convertToBin');
+  if (els.audio.extractBtn && !state.audio.converting) els.audio.extractBtn.textContent = t('extractAudio');
+  if (els.bin.clear) els.bin.clear.textContent = t('clearAll');
+  if (els.iso.clear) els.iso.clear.textContent = t('clearAll');
+  if (els.bin.zip) els.bin.zip.textContent = t('exportZip');
+  if (els.iso.zip) els.iso.zip.textContent = t('exportZip');
+  
+  // Advanced toggle
+  const advToggle = document.querySelector('#advancedToggle span:first-child');
+  if (advToggle) advToggle.textContent = t('advancedOpts');
+  
+  // Toggles
+  const toggleTitles = document.querySelectorAll('.tl-title');
+  if (toggleTitles[0]) toggleTitles[0].textContent = t('hashLabel');
+  if (toggleTitles[1]) toggleTitles[1].textContent = t('verifyLabel');
+  if (toggleTitles[2]) toggleTitles[2].textContent = t('zipCompressLabel');
+  if (toggleTitles[3]) toggleTitles[3].textContent = t('skipEccLabel');
+  
+  // Update info box juga sesuai tab aktif
+  updateInfoBox(state.activeTab);
+  
+  console.log('🌐 Language:', lang);
+}
+
+if (els.langSelect) {
+  els.langSelect.value = currentLang;
+  els.langSelect.addEventListener('change', (e) => applyLanguage(e.target.value));
+}
+
+// Tombol globe di header siklus bahasa
+const LANGS = ['id', 'en', 'ja', 'es', 'zh'];
+if (document.getElementById('langBtn')) {
+  document.getElementById('langBtn').addEventListener('click', () => {
+    const idx = LANGS.indexOf(currentLang);
+    const next = LANGS[(idx + 1) % LANGS.length];
+    applyLanguage(next);
+    if (els.langSelect) els.langSelect.value = next;
+  });
+}
+
+// Apply bahasa saat load
+applyLanguage(currentLang);
+
+if (state.options.hash) els.hashDisplay.style.display = 'flex';
+
+// ============================================================
+// HELP MODAL
+// ============================================================
+els.helpBtn.addEventListener('click', () => els.helpModal.classList.add('show'));
+els.closeHelp.addEventListener('click', () => els.helpModal.classList.remove('show'));
+els.helpModal.addEventListener('click', (e) => {
+  if (e.target === els.helpModal) els.helpModal.classList.remove('show');
+});
+
+// ============================================================
+// FAB
+// ============================================================
+els.fabBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ============================================================
+// FILE INPUT SETUP
+// ============================================================
+function setupFileInput(type, allowedExts) {
+  const cfg = els[type];
+  cfg.dropZone.addEventListener('click', () => cfg.input.click());
+  
+  cfg.input.addEventListener('change', (e) => {
+    addFiles(type, Array.from(e.target.files), allowedExts);
+    e.target.value = '';
+  });
+  
+  ['dragenter', 'dragover'].forEach(evt => {
+    cfg.dropZone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      cfg.dropZone.classList.add('dragover');
+    });
+  });
+  
+  ['dragleave', 'drop'].forEach(evt => {
+    cfg.dropZone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      cfg.dropZone.classList.remove('dragover');
+    });
+  });
+  
+  cfg.dropZone.addEventListener('drop', (e) => {
+    addFiles(type, Array.from(e.dataTransfer.files), allowedExts);
+  });
+}
+
+setupFileInput('bin', ['.bin', '.cue']);
+setupFileInput('iso', ['.iso']);
+setupFileInput('audio', ['.bin', '.cue']);
+
+// ============================================================
+// ADD FILES
+// ============================================================
+async function addFiles(type, files, allowedExts) {
+  const valid = files.filter(f => allowedExts.some(ext => f.name.toLowerCase().endsWith(ext)));
+  if (valid.length === 0) {
+    showStatus(type, `File harus berformat ${allowedExts.join(' / ')}`, 'error');
+    return;
+  }
+  
+  if (type === 'audio') {
+    return addAudioFiles(valid);
+  }
+  
+  const store = state[type === 'bin' ? 'bin2iso' : 'iso2bin'];
+  
+  const cueFiles = valid.filter(f => f.name.toLowerCase().endsWith('.cue'));
+  const binFiles = valid.filter(f => f.name.toLowerCase().endsWith('.bin'));
+  const isoFiles = valid.filter(f => f.name.toLowerCase().endsWith('.iso'));
+  
+  // Parse CUE
+  const cueMap = new Map();
+  const unmatchedCue = [];
+  
+  for (const cue of cueFiles) {
+    try {
+      const cueInfo = await parseCue(cue);
+      const matchedBin = binFiles.find(b => 
+        b.name.toLowerCase() === cueInfo.binFile.toLowerCase() ||
+        b.name === cueInfo.binFile
+      );
+      if (matchedBin) cueMap.set(matchedBin.name, cueInfo);
+      else unmatchedCue.push(cue);
+    } catch (err) { console.warn('CUE parse error:', err); }
+  }
+  
+  for (const bin of binFiles) {
+    if (store.files.some(f => f.name === bin.name && f.size === bin.size)) continue;
+    store.files.push({
+      type: 'bin', file: bin, name: bin.name, size: bin.size,
+      cue: cueMap.get(bin.name) || null,
+      status: 'pending', id: genId()
+    });
+  }
+  
+  for (const iso of isoFiles) {
+    if (store.files.some(f => f.name === iso.name && f.size === iso.size)) continue;
+    store.files.push({
+      type: 'iso', file: iso, name: iso.name, size: iso.size,
+      status: 'pending', id: genId()
+    });
+  }
+  
+  if (unmatchedCue.length > 0) {
+    showStatus(type, `${unmatchedCue.length} file .cue tidak menemukan pasangan .bin`, 'warning');
+  }
+  
+  renderFileList(type);
+}
+
+function genId() { return Math.random().toString(36).substr(2, 9); }
+
+// ============================================================
+// PARSE CUE
+// ============================================================
+async function parseCue(cueFile) {
+  const text = await cueFile.text();
+  const lines = text.split(/\r?\n/);
+  const info = { binFile: null, tracks: [], mode: null, hasAudio: false };
+  
+  for (const line of lines) {
+    const t = line.trim();
+    if (!t || t.startsWith('REM')) continue;
+    
+    const fileMatch = t.match(/^FILE\s+"?(.+?)"?\s+BINARY$/i);
+    if (fileMatch) { info.binFile = fileMatch[1].trim(); continue; }
+    
+    const trackMatch = t.match(/^TRACK\s+(\d+)\s+(\S+)/i);
+    if (trackMatch) {
+      const trackNum = parseInt(trackMatch[1]);
+      const typeStr = trackMatch[2].toUpperCase();
+      let mode = null;
+      if (typeStr.startsWith('MODE1')) mode = 'mode1';
+      else if (typeStr.startsWith('MODE2')) mode = 'mode2';
+      else if (typeStr === 'AUDIO') { mode = 'audio'; info.hasAudio = true; }
+      
+      info.tracks.push({ num: trackNum, type: typeStr, mode, indexes: [], title: '' });
+      if (!info.mode && mode && mode !== 'audio') info.mode = mode;
+      continue;
+    }
+    
+    const idxMatch = t.match(/^INDEX\s+(\d+)\s+(\d+):(\d+):(\d+)/i);
+    if (idxMatch && info.tracks.length > 0) {
+      const [_, idx, mm, ss, ff] = idxMatch;
+      const sector = parseInt(mm) * 60 * 75 + parseInt(ss) * 75 + parseInt(ff);
+      info.tracks[info.tracks.length - 1].indexes.push({ index: parseInt(idx), sector });
+      continue;
+    }
+    
+    const titleMatch = t.match(/^TITLE\s+"(.+)"/i);
+    if (titleMatch && info.tracks.length > 0) {
+      info.tracks[info.tracks.length - 1].title = titleMatch[1];
+    }
+  }
+  
+  return info;
+}
+
+// ============================================================
+// RENDER FILE LIST
+// ============================================================
+function renderFileList(type) {
+  const cfg = els[type];
+  const store = state[type === 'bin' ? 'bin2iso' : 'iso2bin'];
+  
+  if (store.files.length === 0) {
+    cfg.list.innerHTML = '<div class="empty-state">Belum ada file</div>';
+    cfg.actions.style.display = 'none';
+    cfg.convertBtn.disabled = true;
+    return;
+  }
+  
+  const statusMap = {
+    pending: { class: 'pending', text: 'Siap' },
+    processing: { class: 'processing', text: 'Proses' },
+    done: { class: 'done', text: '✓ Selesai' },
+    error: { class: 'error', text: '✗ Gagal' }
+  };
+  
+  cfg.list.innerHTML = store.files.map((item, idx) => {
+    const icon = item.type === 'bin' ? '📀' : '💾';
+    const cueBadge = item.cue ? '<span class="cue-badge">CUE</span>' : '';
+    const sectorSize = item.type === 'bin' ? SECTOR_BIN : SECTOR_ISO;
+    const sectors = Math.floor(item.size / sectorSize);
+    const st = statusMap[item.status] || statusMap.pending;
+    
+    return `
+      <div class="file-item">
+        <div class="fi-icon">${icon}</div>
+        <div class="fi-info">
+          <div class="fi-name">${escapeHtml(item.name)}${cueBadge}</div>
+          <div class="fi-meta">
+            <span>📦 ${formatSize(item.size)}</span>
+            <span>💠 ${sectors.toLocaleString()} sektor</span>
+          </div>
+        </div>
+        <span class="fi-status ${st.class}">${st.text}</span>
+        ${item.status === 'processing' ? '' : 
+          `<button class="fi-remove" data-remove="${idx}">×</button>`}
+      </div>
+    `;
+  }).join('');
+  
+  cfg.actions.style.display = 'flex';
+  cfg.convertBtn.disabled = store.converting || store.files.every(f => f.status === 'done');
+  
+  cfg.list.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = parseInt(btn.dataset.remove);
+      store.files.splice(idx, 1);
+      renderFileList(type);
+    });
+  });
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (m) => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[m]));
+}
+
+// ============================================================
+// FORMAT UTILITIES
+// ============================================================
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+  if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+  return (bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+}
+
+function showStatus(type, msg, kind = 'info') {
+  const s = els[type].status;
+  s.textContent = msg;
+  s.className = 'status show ' + kind;
+}
+
+function hideStatus(type) { els[type].status.className = 'status'; }
+
+function setProgress(type, percent, text) {
+  els[type].fill.style.width = Math.min(percent, 100) + '%';
+  els[type].text.textContent = text || Math.floor(percent) + '%';
+}
+
+function setOverall(type, text) {
+  const o = els[type].overall;
+  if (text) { o.textContent = text; o.style.display = 'block'; }
+  else { o.style.display = 'none'; }
+}
+
+function matchesSync(data, offset) {
+  if (offset + 12 > data.length) return false;
+  for (let i = 0; i < 12; i++) {
+    if (data[offset + i] !== SYNC_HEADER[i]) return false;
+  }
+  return true;
+}
+
+function yieldUI() { return new Promise(r => setTimeout(r, 0)); }
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+// ============================================================
+// HASH CALCULATIONS
+// ============================================================
+async function computeHashes(blobOrArrayBuffer) {
+  const buf = blobOrArrayBuffer instanceof ArrayBuffer 
+    ? blobOrArrayBuffer 
+    : await blobOrArrayBuffer.arrayBuffer();
+  
+  // MD5 (via crypto.subtle tidak support MD5, gunakan JS)
+  const md5 = computeMD5(new Uint8Array(buf));
+  
+  // SHA-1 via crypto.subtle
+  const sha1Buf = await crypto.subtle.digest('SHA-1', buf);
+  const sha1 = Array.from(new Uint8Array(sha1Buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  return { md5, sha1 };
+}
+
+// MD5 Implementasi ringkas (untuk file besar akan lambat, gunakan worker idealnya)
+function computeMD5(data) {
+  // MD5 satu-liner sederhana (public domain)
+  const S = [7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,
+             5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,
+             4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,
+             6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+  const K = new Uint32Array(64);
+  for (let i = 0; i < 64; i++) K[i] = Math.floor(Math.abs(Math.sin(i+1)) * 4294967296);
+  
+  const len = data.length;
+  const bitLen = len * 8;
+  const paddedLen = (((len + 8) >> 6) + 1) * 64;
+  const padded = new Uint8Array(paddedLen);
+  padded.set(data);
+  padded[len] = 0x80;
+  const view = new DataView(padded.buffer);
+  view.setUint32(paddedLen - 8, bitLen >>> 0, true);
+  view.setUint32(paddedLen - 4, Math.floor(bitLen / 4294967296), true);
+  
+  let a0 = 0x67452301, b0 = 0xefcdab89, c0 = 0x98badcfe, d0 = 0x10325476;
+  
+  for (let chunk = 0; chunk < paddedLen; chunk += 64) {
+    const M = new Uint32Array(16);
+    for (let i = 0; i < 16; i++) M[i] = view.getUint32(chunk + i * 4, true);
+    
+    let A = a0, B = b0, C = c0, D = d0;
+    for (let i = 0; i < 64; i++) {
+      let F, g;
+      if (i < 16) { F = (B & C) | (~B & D); g = i; }
+      else if (i < 32) { F = (D & B) | (~D & C); g = (5*i + 1) % 16; }
+      else if (i < 48) { F = B ^ C ^ D; g = (3*i + 5) % 16; }
+      else { F = C ^ (B | ~D); g = (7*i) % 16; }
+      F = (F + A + K[i] + M[g]) >>> 0;
+      A = D; D = C; C = B;
+      B = (B + ((F << S[i]) | (F >>> (32 - S[i])))) >>> 0;
+    }
+    a0 = (a0 + A) >>> 0;
+    b0 = (b0 + B) >>> 0;
+    c0 = (c0 + C) >>> 0;
+    d0 = (d0 + D) >>> 0;
+  }
+  
+  const out = new Uint8Array(16);
+  const ov = new DataView(out.buffer);
+  ov.setUint32(0, a0, true); ov.setUint32(4, b0, true);
+  ov.setUint32(8, c0, true); ov.setUint32(12, d0, true);
+  return Array.from(out).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ============================================================
+// ZIP EXPORT
+// ============================================================
+async function exportZip(type) {
+  const store = state[type === 'bin' ? 'bin2iso' : 'iso2bin'];
+  const doneFiles = store.results.filter(r => r.blob);
+  
+  if (doneFiles.length === 0) {
+    showStatus(type, 'Belum ada file yang dikonversi', 'warning');
+    return;
+  }
+  
+  showStatus(type, 'Membuat ZIP...', 'info');
+  
+  try {
+    const zip = new JSZip();
+    for (const r of doneFiles) {
+      zip.file(r.name, r.blob);
+    }
+    
+    const zipBlob = await zip.generateAsync({
+      type: 'blob',
+      compression: state.options.zipCompress ? 'DEFLATE' : 'STORE',
+      compressionOptions: state.options.zipCompress ? { level: 6 } : undefined
+    }, (meta) => {
+      setProgress(type, meta.percent, `ZIP: ${Math.floor(meta.percent)}%`);
+    });
+    
+    const zipName = type === 'bin' ? 'converted-iso.zip' : 'converted-bin.zip';
+    downloadBlob(zipBlob, zipName);
+    showStatus(type, `✅ ZIP (${formatSize(zipBlob.size)}) ${currentLang === 'en' ? 'created' : 'berhasil dibuat'}`, 'success');
+  } catch (err) {
+    showStatus(type, 'ZIP gagal: ' + err.message, 'error');
+  }
+}
+
+els.bin.zip.addEventListener('click', () => exportZip('bin'));
+els.iso.zip.addEventListener('click', () => exportZip('iso'));
+
+// Clear all
+els.bin.clear.addEventListener('click', () => {
+  state.bin2iso.files = [];
+  state.bin2iso.results = [];
+  renderFileList('bin');
+  hideStatus('bin');
+  els.bin.progress.classList.remove('show');
+});
+
+els.iso.clear.addEventListener('click', () => {
+  state.iso2bin.files = [];
+  state.iso2bin.results = [];
+  renderFileList('iso');
+  hideStatus('iso');
+  els.iso.progress.classList.remove('show');
+});
+
+// ============================================================
+// DETECT BIN MODE
+// ============================================================
+async function detectBinMode(file, cueInfo) {
+  if (cueInfo && cueInfo.mode) return cueInfo.mode;
+  
+  const slice = file.slice(0, SECTOR_BIN * 2);
+  const buf = await slice.arrayBuffer();
+  const data = new Uint8Array(buf);
+  
+  const hasSync0 = matchesSync(data, 0);
+  const hasSync1 = matchesSync(data, SECTOR_BIN);
+  
+  if (!hasSync0 && !hasSync1) {
+    if (file.size % SECTOR_ISO === 0) return '2048';
+    return 'mode1';
+  }
+  
+  const modeByte = data[15];
+  if (modeByte === 0x01) return 'mode1';
+  if (modeByte === 0x02) return 'mode2';
+  return 'mode1';
+}
+
+// ============================================================
+// BIN → ISO
+// ============================================================
+els.bin.convertBtn.addEventListener('click', async () => {
+  const store = state.bin2iso;
+  if (store.converting || store.files.length === 0) return;
+  
+  store.converting = true;
+  store.results = [];
+  const cfg = els.bin;
+  cfg.convertBtn.disabled = true;
+  cfg.convertBtn.innerHTML = '<span class="spinner"></span> Memproses...';
+  cfg.progress.classList.add('show');
+  hideStatus('bin');
+  
+  const total = store.files.length;
+  let completed = 0, failed = 0;
+  const startTime = Date.now();
+  
+  for (let i = 0; i < store.files.length; i++) {
+    const item = store.files[i];
+    if (item.status === 'done') { completed++; continue; }
+    
+    item.status = 'processing';
+    renderFileList('bin');
+    setOverall('bin', `📁 File ${i + 1}/${total}: ${item.name}`);
+    
+    try {
+      const result = await convertBinToIso(item);
+      item.status = 'done';
+      store.results.push(result);
+      completed++;
+    } catch (err) {
+      console.error(err);
+      item.status = 'error';
+      item.error = err.message;
+      failed++;
+    }
+    
+    renderFileList('bin');
+    await yieldUI();
+  }
+  
+  store.converting = false;
+  cfg.convertBtn.disabled = false;
+  cfg.convertBtn.innerHTML = t('convertToIso');
+  
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+  if (failed === 0) {
+    showStatus('bin', `✅ ${completed} file selesai dalam ${elapsed}s`, 'success');
+  } else {
+    showStatus('bin', `Selesai: ${completed} sukses, ${failed} gagal (${elapsed}s)`, 'warning');
+  }
+  
+  setOverall('bin', `✅ Total: ${completed} berhasil${failed > 0 ? ` · ❌ ${failed} gagal` : ''}`);
+});
+
+async function convertBinToIso(item) {
+  const file = item.file;
+  let mode = state.bin2iso.mode;
+  if (mode === 'auto') mode = await detectBinMode(file, item.cue);
+  
+  const outputName = file.name.replace(/\.bin$/i, '.iso');
+  
+  if (mode === '2048') {
+    // Raw copy
+    const blob = new Blob([file], { type: 'application/octet-stream' });
+    const result = { name: outputName, blob, mode: '2048', size: blob.size };
+    
+    if (state.options.verify) await verifyOutput(result);
+    if (state.options.hash) await attachHash(result);
+    
+    downloadBlob(blob, outputName);
+    setProgress('bin', 100, '✅ Selesai (raw copy)');
+    return result;
+  }
+  
+  const totalSize = file.size;
+  const totalSectors = Math.floor(totalSize / SECTOR_BIN);
+  const CHUNK_SECTORS = 2048;
+  const chunkBinSize = CHUNK_SECTORS * SECTOR_BIN;
+  
+  const isoChunks = [];
+  let offset = 0, sectorsProcessed = 0;
+  
+  while (offset < totalSize) {
+    const end = Math.min(offset + chunkBinSize, totalSize);
+    const slice = file.slice(offset, end);
+    const arrayBuffer = await slice.arrayBuffer();
+    const binData = new Uint8Array(arrayBuffer);
+    
+    const usableSectors = Math.floor(binData.length / SECTOR_BIN);
+    const isoChunk = new Uint8Array(usableSectors * SECTOR_ISO);
+    
+    for (let i = 0; i < usableSectors; i++) {
+      const binOffset = i * SECTOR_BIN;
+      const isoOffset = i * SECTOR_ISO;
+      const isRaw = matchesSync(binData, binOffset);
+      let dataOffset;
+      
+      if (isRaw) {
+        const modeByte = binData[binOffset + 15];
+        dataOffset = (mode === 'mode2' || modeByte === 0x02) ? binOffset + 24 : binOffset + 16;
+      } else {
+        dataOffset = binOffset;
+      }
+      
+      if (dataOffset + SECTOR_ISO <= binData.length) {
+        isoChunk.set(binData.subarray(dataOffset, dataOffset + SECTOR_ISO), isoOffset);
+      }
+    }
+    
+    isoChunks.push(isoChunk);
+    sectorsProcessed += usableSectors;
+    offset = end;
+    
+    const percent = Math.min((offset / totalSize) * 100, 99);
+    setProgress('bin', percent, `${Math.floor(percent)}% · ${sectorsProcessed.toLocaleString()}/${totalSectors.toLocaleString()} sektor`);
+    await yieldUI();
+  }
+  
+  setProgress('bin', 100, 'Membuat file...');
+  const blob = new Blob(isoChunks, { type: 'application/octet-stream' });
+  
+  const result = { name: outputName, blob, mode, size: blob.size };
+  
+  if (state.options.verify) {
+    await verifyOutput(result);
+  }
+  if (state.options.hash) {
+    await attachHash(result);
+  }
+  
+  downloadBlob(blob, outputName);
+  setProgress('bin', 100, '✅ Selesai');
+  return result;
+}
+
+// ============================================================
+// ISO → BIN
+// ============================================================
+els.iso.convertBtn.addEventListener('click', async () => {
+  const store = state.iso2bin;
+  if (store.converting || store.files.length === 0) return;
+  
+  store.converting = true;
+  store.results = [];
+  const cfg = els.iso;
+  cfg.convertBtn.disabled = true;
+  cfg.convertBtn.innerHTML = '<span class="spinner"></span> Memproses...';
+  cfg.progress.classList.add('show');
+  hideStatus('iso');
+  
+  const total = store.files.length;
+  let completed = 0, failed = 0;
+  const startTime = Date.now();
+  
+  for (let i = 0; i < store.files.length; i++) {
+    const item = store.files[i];
+    if (item.status === 'done') { completed++; continue; }
+    
+    item.status = 'processing';
+    renderFileList('iso');
+    setOverall('iso', `📁 File ${i + 1}/${total}: ${item.name}`);
+    
+    try {
+      const result = await convertIsoToBin(item);
+      item.status = 'done';
+      store.results.push(result);
+      completed++;
+    } catch (err) {
+      console.error(err);
+      item.status = 'error';
+      item.error = err.message;
+      failed++;
+    }
+    
+    renderFileList('iso');
+    await yieldUI();
+  }
+  
+  store.converting = false;
+  cfg.convertBtn.disabled = false;
+  cfg.convertBtn.innerHTML = t('convertToBin');
+  
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+  if (failed === 0) {
+    showStatus('iso', `✅ ${completed} file selesai dalam ${elapsed}s`, 'success');
+  } else {
+    showStatus('iso', `Selesai: ${completed} sukses, ${failed} gagal (${elapsed}s)`, 'warning');
+  }
+  
+  setOverall('iso', `✅ Total: ${completed} berhasil${failed > 0 ? ` · ❌ ${failed} gagal` : ''}`);
+});
+
+async function convertIsoToBin(item) {
+  const file = item.file;
+  const mode = state.iso2bin.mode;
+  const outputName = file.name.replace(/\.iso$/i, '.bin');
+  
+  const totalSize = file.size;
+  const totalSectors = Math.floor(totalSize / SECTOR_ISO);
+  const CHUNK_SECTORS = 1024;
+  const chunkIsoSize = CHUNK_SECTORS * SECTOR_ISO;
+  
+  const binSector = new Uint8Array(SECTOR_BIN);
+  const binChunks = [];
+  let offset = 0, sectorsProcessed = 0;
+  
+  while (offset < totalSize) {
+    const end = Math.min(offset + chunkIsoSize, totalSize);
+    const slice = file.slice(offset, end);
+    const arrayBuffer = await slice.arrayBuffer();
+    const isoData = new Uint8Array(arrayBuffer);
+    
+    const usableSectors = Math.floor(isoData.length / SECTOR_ISO);
+    const binChunk = new Uint8Array(usableSectors * SECTOR_BIN);
+    
+    for (let i = 0; i < usableSectors; i++) {
+      const isoOffset = i * SECTOR_ISO;
+      const binOffset = i * SECTOR_BIN;
+      writeBinSector(binSector, isoData, isoOffset, sectorsProcessed + i, mode);
+      binChunk.set(binSector, binOffset);
+    }
+    
+    binChunks.push(binChunk);
+    sectorsProcessed += usableSectors;
+    offset = end;
+    
+    const percent = Math.min((offset / totalSize) * 100, 99);
+    setProgress('iso', percent, `${Math.floor(percent)}% · ${sectorsProcessed.toLocaleString()}/${totalSectors.toLocaleString()} sektor`);
+    await yieldUI();
+  }
+  
+  setProgress('iso', 100, 'Membuat file...');
+  const blob = new Blob(binChunks, { type: 'application/octet-stream' });
+  
+  const result = { name: outputName, blob, mode, size: blob.size };
+  
+  if (state.options.verify) await verifyOutput(result);
+  if (state.options.hash) await attachHash(result);
+  
+  downloadBlob(blob, outputName);
+  setProgress('iso', 100, '✅ Selesai');
+  return result;
+}
+
+// ============================================================
+// WRITE BIN SECTOR
+// ============================================================
+function writeBinSector(sector, isoData, isoOffset, absSectorIdx, mode) {
+  sector.fill(0);
+  sector.set(SYNC_HEADER, 0);
+  
+  const absSector = absSectorIdx + 150;
+  const min = Math.floor(absSector / (60 * 75));
+  const sec = Math.floor((absSector % (60 * 75)) / 75);
+  const frame = absSector % 75;
+  
+  sector[12] = toBCD(min);
+  sector[13] = toBCD(sec);
+  sector[14] = toBCD(frame);
+  sector[15] = mode === 'mode2' ? 0x02 : 0x01;
+  
+  if (mode === 'mode1') {
+    sector.set(isoData.subarray(isoOffset, isoOffset + SECTOR_ISO), 16);
+    
+    if (!state.options.skipEcc) {
+      const edc = computeEDC(sector, 0, 2064);
+      sector[2064] = edc & 0xFF;
+      sector[2065] = (edc >> 8) & 0xFF;
+      sector[2066] = (edc >> 16) & 0xFF;
+      sector[2067] = (edc >> 24) & 0xFF;
+      computeECC(sector);
+    }
+  } else {
+    sector[16] = 0x00; sector[17] = 0x00;
+    sector[18] = 0x08; sector[19] = 0x00;
+    sector[20] = 0x00; sector[21] = 0x00;
+    sector[22] = 0x08; sector[23] = 0x00;
+    sector.set(isoData.subarray(isoOffset, isoOffset + SECTOR_ISO), 24);
+    
+    if (!state.options.skipEcc) {
+      const edc = computeEDC(sector, 16, 8 + SECTOR_ISO);
+      sector[2072] = edc & 0xFF;
+      sector[2073] = (edc >> 8) & 0xFF;
+      sector[2074] = (edc >> 16) & 0xFF;
+      sector[2075] = (edc >> 24) & 0xFF;
+      computeECC(sector);
+    }
+  }
+}
+
+function toBCD(n) {
+  return ((Math.floor(n / 10) << 4) | (n % 10)) & 0xFF;
+}
+
+// ============================================================
+// EDC
+// ============================================================
+const EDC_TABLE = (() => {
+  const t = new Uint32Array(256);
+  for (let i = 0; i < 256; i++) {
+    let edc = i;
+    for (let j = 0; j < 8; j++) edc = (edc & 1) ? ((edc >>> 1) ^ 0xD8018001) : (edc >>> 1);
+    t[i] = edc >>> 0;
+  }
+  return t;
+})();
+
+function computeEDC(data, offset, length) {
+  let edc = 0;
+  for (let i = 0; i < length; i++) {
+    edc = (EDC_TABLE[(edc ^ data[offset + i]) & 0xFF] ^ (edc >>> 8)) >>> 0;
+  }
+  return edc;
+}
+
+// ============================================================
+// ECC (ECMA-130 Annex A)
+// ============================================================
+const GF = (() => {
+  const exp = new Uint8Array(512);
+  const log = new Uint8Array(256);
+  let x = 1;
+  for (let i = 0; i < 255; i++) {
+    exp[i] = x;
+    log[x] = i;
+    x <<= 1;
+    if (x & 0x100) x ^= 0x11D;
+  }
+  for (let i = 255; i < 512; i++) exp[i] = exp[i - 255];
+  return { exp, log };
+})();
+
+const P_TABLE = (() => {
+  const t = new Uint8Array(2 * 24);
+  for (let i = 0; i < 2; i++)
+    for (let j = 0; j < 24; j++)
+      t[i * 24 + j] = GF.exp[(i * 25 + j) % 255];
+  return t;
+})();
+
+const Q_TABLE = (() => {
+  const t = new Uint8Array(2 * 43);
+  for (let i = 0; i < 2; i++)
+    for (let j = 0; j < 43; j++)
+      t[i * 43 + j] = GF.exp[(i * 44 + j) % 255];
+  return t;
+})();
+
+function gfMul(a, b) {
+  if (a === 0 || b === 0) return 0;
+  return GF.exp[(GF.log[a] + GF.log[b]) % 255];
+}
+
+function computeECC(sector) {
+  const ECC_P = 2076, ECC_Q = 2248;
+  
+  for (let col = 0; col < 43; col++) {
+    let p0 = 0, p1 = 0;
+    for (let row = 0; row < 24; row++) {
+      const idx0 = 12 + col + row * 2 * 43;
+      const idx1 = 12 + col + (row * 2 + 1) * 43;
+      const b0 = idx0 < 2076 ? sector[idx0] : 0;
+      const b1 = idx1 < 2076 ? sector[idx1] : 0;
+      p0 ^= gfMul(b0, P_TABLE[0 * 24 + row]);
+      p1 ^= gfMul(b1, P_TABLE[1 * 24 + row]);
+    }
+    sector[ECC_P + col * 2] = p0 & 0xFF;
+    sector[ECC_P + col * 2 + 1] = p1 & 0xFF;
+  }
+  
+  for (let col = 0; col < 26; col++) {
+    let q0 = 0, q1 = 0;
+    for (let row = 0; row < 43; row++) {
+      const idx0 = 12 + ((col + row * 2) % 43) + row * 43;
+      const idx1 = 12 + ((col + row * 2 + 1) % 43) + row * 43;
+      const b0 = (idx0 < 2076 && idx0 >= 12) ? sector[idx0] : 0;
+      const b1 = (idx1 < 2076 && idx1 >= 12) ? sector[idx1] : 0;
+      q0 ^= gfMul(b0, Q_TABLE[0 * 43 + row]);
+      q1 ^= gfMul(b1, Q_TABLE[1 * 43 + row]);
+    }
+    sector[ECC_Q + col * 2] = q0 & 0xFF;
+    sector[ECC_Q + col * 2 + 1] = q1 & 0xFF;
+  }
+}
+
+// ============================================================
+// VERIFY & HASH
+// ============================================================
+async function verifyOutput(result) {
+  const expectedSize = result.mode === '2048' ? result.size : 
+    Math.floor(result.size / SECTOR_ISO) * SECTOR_ISO;
+  
+  if (result.size === 0) throw new Error('Output kosong');
+  if (result.size % SECTOR_ISO !== 0 && result.mode !== '2048') {
+    console.warn('Ukuran tidak kelipatan 2048:', result.size);
+  }
+  
+  return true;
+}
+
+async function attachHash(result) {
+  try {
+    els.md5Value.textContent = '⏳ Menghitung...';
+    els.sha1Value.textContent = '⏳ Menghitung...';
+    const { md5, sha1 } = await computeHashes(result.blob);
+    result.md5 = md5;
+    result.sha1 = sha1;
+    els.md5Value.textContent = md5;
+    els.sha1Value.textContent = sha1;
+  } catch (err) {
+    console.warn('Hash error:', err);
+  }
+}
+
+// ============================================================
+// AUDIO EXTRACTION
+// ============================================================
+async function addAudioFiles(files) {
+  const cueFile = files.find(f => f.name.toLowerCase().endsWith('.cue'));
+  const binFile = files.find(f => f.name.toLowerCase().endsWith('.bin'));
+  
+  if (!cueFile || !binFile) {
+    showStatus('audio', 'Butuh file .cue DAN .bin', 'error');
+    return;
+  }
+  
+  try {
+    const cueInfo = await parseCue(cueFile);
+    state.audio.cueFile = cueFile;
+    state.audio.binFile = binFile;
+    
+    // Filter track audio
+    const audioTracks = cueInfo.tracks.filter(t => t.mode === 'audio');
+    
+    if (audioTracks.length === 0) {
+      showStatus('audio', 'Tidak ada track audio di CUE', 'warning');
+      els.audio.list.innerHTML = '<div class="empty-state">Tidak ada track audio</div>';
+      els.audio.extractBtn.disabled = true;
+      return;
+    }
+    
+    // Hitung ukuran tiap track berdasarkan index
+    const dataTracks = cueInfo.tracks.filter(t => t.mode !== 'audio');
+    const trackStarts = cueInfo.tracks.map(t => {
+      const idx01 = t.indexes.find(i => i.index === 1);
+      return { ...t, startSector: idx01 ? idx01.sector : 0 };
+    });
+    
+    for (let i = 0; i < trackStarts.length; i++) {
+      const cur = trackStarts[i];
+      const next = trackStarts[i + 1];
+      cur.endSector = next ? next.startSector : Math.floor(binFile.size / SECTOR_BIN);
+      cur.numSectors = cur.endSector - cur.startSector;
+    }
+    
+    state.audio.tracks = trackStarts.filter(t => t.mode === 'audio');
+    
+    els.audio.list.innerHTML = state.audio.tracks.map((t, i) => `
+      <div class="audio-track">
+        <div class="at-num">${t.num}</div>
+        <div class="at-info">
+          <div class="at-title">Track ${t.num}${t.title ? ': ' + escapeHtml(t.title) : ''}</div>
+          <div class="at-meta">${t.numSectors.toLocaleString()} sektor · ${formatSize(t.numSectors * SECTOR_BIN)} · ${formatDuration(t.numSectors / 75)}</div>
+        </div>
+      </div>
+    `).join('');
+    
+    els.audio.extractBtn.disabled = false;
+    showStatus('audio', `✅ ${state.audio.tracks.length} track audio ditemukan`, 'success');
+  } catch (err) {
+    showStatus('audio', 'Parse CUE gagal: ' + err.message, 'error');
+  }
+}
+
+function formatDuration(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+els.audio.extractBtn.addEventListener('click', async () => {
+  const a = state.audio;
+  if (a.converting || a.tracks.length === 0 || !a.binFile) return;
+  
+  a.converting = true;
+  els.audio.extractBtn.disabled = true;
+  els.audio.extractBtn.innerHTML = '<span class="spinner"></span> Ekstrak...';
+  els.audio.progress.classList.add('show');
+  hideStatus('audio');
+  
+  const total = a.tracks.length;
+  let completed = 0;
+  const startTime = Date.now();
+  const results = [];
+  
+  for (let i = 0; i < a.tracks.length; i++) {
+    const track = a.tracks[i];
+    setOverall('audio', `🎵 Track ${track.num} (${i + 1}/${total})`);
+    
+    try {
+      const wavBlob = await extractAudioTrack(a.binFile, track);
+      const fileName = `track${String(track.num).padStart(2, '0')}.wav`;
+      results.push({ name: fileName, blob: wavBlob });
+      downloadBlob(wavBlob, fileName);
+      completed++;
+    } catch (err) {
+      console.error('Track error:', err);
+    }
+    
+    setProgress('audio', ((i + 1) / total) * 100, `Track ${i + 1}/${total}`);
+    await yieldUI();
+  }
+  
+  // Optional: zip all
+  if (results.length > 1) {
+    try {
+      const zip = new JSZip();
+      results.forEach(r => zip.file(r.name, r.blob));
+      const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+      downloadBlob(zipBlob, 'audio-tracks.zip');
+    } catch (err) { console.warn('ZIP error:', err); }
+  }
+  
+  a.converting = false;
+  els.audio.extractBtn.disabled = false;
+  els.audio.extractBtn.innerHTML = t('extractAudio');
+  
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+  showStatus('audio', `✅ ${completed} track diekstrak dalam ${elapsed}s`, 'success');
+});
+
+async function extractAudioTrack(binFile, track) {
+  const startByte = track.startSector * SECTOR_BIN;
+  const lengthBytes = track.numSectors * SECTOR_BIN;
+  
+  const slice = binFile.slice(startByte, startByte + lengthBytes);
+  const buf = await slice.arrayBuffer();
+  const raw = new Uint8Array(buf);
+  
+  // CD-DA = 16-bit signed PCM stereo, 44.1 kHz
+  // Data BIN sudah dalam format PCM langsung (2352 byte = 588 samples × 2 ch × 2 bytes)
+  const dataSize = Math.floor(raw.length / 4) * 4; // align 4 byte (1 sample stereo 16-bit)
+  
+  // Build WAV header
+  const wavHeader = buildWavHeader(dataSize, 44100, 2, 16);
+  const wav = new Uint8Array(wavHeader.length + dataSize);
+  wav.set(wavHeader, 0);
+  wav.set(raw.subarray(0, dataSize), wavHeader.length);
+  
+  return new Blob([wav], { type: 'audio/wav' });
+}
+
+function buildWavHeader(dataSize, sampleRate, numChannels, bitsPerSample) {
+  const byteRate = sampleRate * numChannels * bitsPerSample / 8;
+  const blockAlign = numChannels * bitsPerSample / 8;
+  const buffer = new ArrayBuffer(44);
+  const view = new DataView(buffer);
+  
+  const writeStr = (off, str) => {
+    for (let i = 0; i < str.length; i++) view.setUint8(off + i, str.charCodeAt(i));
+  };
+  
+  writeStr(0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeStr(8, 'WAVE');
+  writeStr(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, byteRate, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bitsPerSample, true);
+  writeStr(36, 'data');
+  view.setUint32(40, dataSize, true);
+  
+  return new Uint8Array(buffer);
+}
+
+// ============================================================
+// PWA
+// ============================================================
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  els.installBanner.classList.add('show');
+});
+
+els.installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  els.installBanner.classList.remove('show');
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW failed:', err));
+  });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderFileList('bin');
+renderFileList('iso');
+updateInfoBox('bin2iso');
+
+// Prevent double-tap zoom
+// touch-action: manipulation di CSS sudah cukup untuk cegah double-tap zoom
+
+// Show FAB on scroll
+window.addEventListener('scroll', () => {
+  els.fabBtn.style.opacity = window.scrollY > 400 ? '1' : '0';
+  els.fabBtn.style.pointerEvents = window.scrollY > 400 ? 'auto' : 'none';
+}, { passive: true });
+
+els.fabBtn.style.opacity = '0';
+els.fabBtn.style.pointerEvents = 'none';
+els.fabBtn.style.transition = 'opacity 0.3s ease';
+
+console.log('💿 BIN ↔ ISO Ultimate loaded');
+
+// ============================================================
+// PATCH: Debug + auto-rebind tombol
+// ============================================================
+(function() {
+  window.addEventListener('error', (e) => {
+    console.error('💥 Error:', e.message, e.filename, e.lineno);
+    const bar = document.createElement('div');
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#ff4757;color:#fff;padding:8px;font-size:11px;z-index:99999;font-family:monospace;word-break:break-all;';
+    bar.textContent = '⚠️ ' + e.message + ' @' + e.lineno + '  (tap untuk tutup)';
+    bar.style.cursor = 'pointer';
+    bar.onclick = () => bar.remove();
+    document.body.appendChild(bar);
+    setTimeout(() => { if (bar.parentNode) bar.remove(); }, 8000);
+  });
+
+  window.addEventListener('unhandledrejection', (e) => {
+    console.error('💥 Promise:', e.reason);
+  });
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('button, .tab, .drop-zone, .radio-btn');
+    if (btn) console.log('👆 Tap:', btn.id || btn.className);
+  }, true);
+
+  setTimeout(() => {
+    console.log('✅ Patch aktif');
+    console.log('   themeBtn:', !!document.getElementById('themeBtn'));
+    console.log('   helpBtn:', !!document.getElementById('helpBtn'));
+    console.log('   convertBinBtn:', !!document.getElementById('convertBinBtn'));
+    console.log('   convertIsoBtn:', !!document.getElementById('convertIsoBtn'));
+    console.log('   JSZip:', typeof JSZip);
+  }, 500);
+})();
+</script>
+
+</body>
+</html>

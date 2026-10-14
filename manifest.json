@@ -1,0 +1,83 @@
+{
+  "name": "BIN ↔ ISO Ultimate",
+  "short_name": "BIN↔ISO",
+  "description": "Ultimate Disc Image Converter - BIN to ISO, ISO to BIN, dan ekstrak audio CD-DA ke WAV. Offline, cepat, untuk retro gaming.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0f0f1e",
+  "background_color": "#0f0f1e",
+  "lang": "id",
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "BIN → ISO",
+      "short_name": "BIN→ISO",
+      "description": "Konversi BIN ke ISO",
+      "url": "./?tab=bin2iso",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "ISO → BIN",
+      "short_name": "ISO→BIN",
+      "description": "Konversi ISO ke BIN",
+      "url": "./?tab=iso2bin",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Ekstrak Audio",
+      "short_name": "Audio",
+      "description": "Ekstrak track audio ke WAV",
+      "url": "./?tab=audio",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "./",
+      "accept": {
+        "application/octet-stream": [
+          ".bin",
+          ".iso"
+        ],
+        "application/x-iso9660-image": [
+          ".iso"
+        ]
+      }
+    }
+  ]
+}
