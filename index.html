@@ -1,15 +1,57 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>BIN ↔ ISO Ultimate - Offline Disc Image Converter</title>
+<meta name="description" content="Ultimate offline disc image converter - BIN to ISO, ISO to BIN, and CD-DA audio extraction to WAV. Fast, private, batch-ready for retro gaming preservation.">
+<meta name="application-name" content="BIN↔ISO">
 <meta name="theme-color" content="#0f0f1e">
+<meta name="background-color" content="#0f0f1e">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="BIN↔ISO">
+<meta name="msapplication-TileColor" content="#0f0f1e">
+<meta name="msapplication-TileImage" content="icon-192.png">
+<meta name="msapplication-config" content="none">
+<!-- PWA Manifest & Icons - WAJIB buat deploy PWA/TWA -->
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="icon-192.png">
-<title>BIN ↔ ISO Ultimate</title>
+<link rel="icon" type="image/png" sizes="32x32" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<!-- Open Graph buat share & TWA -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="BIN ↔ ISO Ultimate">
+<meta property="og:description" content="Ultimate offline disc image converter - BIN to ISO, ISO to BIN, and CD-DA extraction. 100% offline & private.">
+<meta property="og:image" content="icon-512.png">
+<meta property="og:url" content="./">
+<!-- Canonical buat TWA -->
+<link rel="canonical" href="./">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   
@@ -53,6 +95,18 @@
     --input-bg: rgba(0, 0, 0, 0.03);
   }
   
+  html {
+    overscroll-behavior: none; /* matikan pull-to-refresh */
+    overscroll-behavior-y: none;
+    height: 100%;
+    /* matikan seleksi teks & callout di seluruh dokumen */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 40%, var(--bg-3) 100%);
@@ -63,7 +117,28 @@
     padding-bottom: 90px;
     overflow-x: hidden;
     transition: background 0.3s ease, color 0.3s ease;
-    touch-action: manipulation;
+    touch-action: pan-y; /* tetap bisa scroll vertikal, tapi gak trigger pull-to-refresh */
+    overscroll-behavior-y: contain;
+    overscroll-behavior-x: none;
+    /* MATIKAN seleksi teks long-press */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+  /* paksa semua elemen tidak bisa diseleksi */
+  *, *::before, *::after {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    -webkit-touch-callout: none !important;
+  }
+  /* input & textarea tetap bisa seleksi kalau butuh (optional) - kalau mau total mati, hapus block ini */
+  input, textarea {
+    -webkit-user-select: text !important;
+    user-select: text !important;
   }
   
   .container {
@@ -1208,13 +1283,21 @@
     <strong>ℹ️ Info:</strong> BIN (raw) berisi 2352 B/sector dengan sync + header + data + ECC. ISO hanya berisi data user 2048 B/sector. Mode <em>Auto</em> mendeteksi dari sync pattern.
   </div>
 
-  <!-- FOOTER -->
+  <!-- FOOTER - WAJIB ada link privacy buat TWA Play Store -->
   <div class="footer">
     Bin2iso by Randy CreativeTech @2026<br>
     Made with 💙 untuk komunitas retro gaming<br>
     <span style="font-size:9px;">ECC sesuai ECMA-130 Annex A · Kompatibel cdrdao & ecm</span>
+    <div style="margin-top:10px; font-size:10px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <a href="./privacy.html" style="color:var(--text-dim); text-decoration:underline;">Privacy Policy</a>
+      <a href="./terms.html" style="color:var(--text-dim); text-decoration:underline;">Terms</a>
+      <a href="https://github.com/" target="_blank" style="color:var(--text-dim); text-decoration:underline;">GitHub</a>
+      <span style="color:var(--text-faint);">PWA v2 • TWA Ready</span>
+    </div>
   </div>
-</div>
+
+
+  </div>
 
 <!-- FAB -->
 <button class="fab" id="fabBtn" title="Scroll to top">↑</button>
@@ -2760,6 +2843,35 @@ function buildWavHeader(dataSize, sampleRate, numChannels, bitsPerSample) {
   return new Uint8Array(buffer);
 }
 
+
+// === FIX: Matikan pull-to-refresh & matikan long-press seleksi teks ===
+(function() {
+  let startY = 0;
+  document.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) startY = e.touches[0].clientY;
+  }, {passive: true});
+  document.addEventListener('touchmove', e => {
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - startY;
+    if (window.scrollY <= 0 && diff > 0) {
+      const target = e.target;
+      const isScrollable = target.closest('.modal-body, .file-list, .audio-tracks, .advanced-content');
+      if (!isScrollable) e.preventDefault();
+    }
+  }, {passive: false});
+
+  // Matikan context menu (klik kanan / long-press)
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  // Matikan seleksi teks via browser
+  document.addEventListener('selectstart', e => e.preventDefault());
+  // Matikan copy biar gak muncul popup
+  document.addEventListener('copy', e => e.preventDefault());
+  // iOS: cegah touch callout lama
+  document.addEventListener('touchend', e => {
+    if (e.touches && e.touches.length > 0) return;
+  }, {passive: true});
+})();
+
 // ============================================================
 // PWA
 // ============================================================
@@ -2842,5 +2954,5 @@ console.log('💿 BIN ↔ ISO Ultimate loaded');
 })();
 </script>
 
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
