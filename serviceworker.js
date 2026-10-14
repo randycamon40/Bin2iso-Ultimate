@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bin-iso-ultimate-v2';
+const CACHE_NAME = 'bin-iso-ultimate-v2.1';
 const PRECACHE_URLS = [
   './',
   './index.html',
